@@ -10,7 +10,17 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "prisma:seed": "tsx prisma/seed.ts"
+    "prisma:seed": "tsx prisma/seed.ts",
+    "docker:build": "docker build --no-cache -t ghcr.io/kralluz/backendteapoio:latest .",
+    "docker:push": "docker push ghcr.io/kralluz/backendteapoio:latest",
+    "docker:build-push": "npm run docker:build && npm run docker:push",
+    "deploy": "docker build --no-cache -t ghcr.io/kralluz/backendteapoio:latest . && docker push ghcr.io/kralluz/backendteapoio:latest",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f api"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "keywords": ["api", "typescript", "express", "prisma", "jwt", "autismo", "teapoio"],
   "author": "TeApoio Team",
