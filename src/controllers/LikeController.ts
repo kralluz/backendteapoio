@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
-import { AppError } from '../middlewares/errorHandler';
 
 const prisma = new PrismaClient();
 
