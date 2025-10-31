@@ -14,7 +14,7 @@
     "docker:build": "docker build --no-cache -t ghcr.io/kralluz/backendteapoio:latest .",
     "docker:push": "docker push ghcr.io/kralluz/backendteapoio:latest",
     "docker:build-push": "npm run docker:build && npm run docker:push",
-    "deploy": "docker build --no-cache -t ghcr.io/kralluz/backendteapoio:latest . && docker push ghcr.io/kralluz/backendteapoio:latest",
+    "deploy": "docker build --no-cache -t ghcr.io/kralluz/backendteapoio:latest . && docker push ghcr.io/kralluz/backendteapoio:latest && curl -s -X POST -H 'Content-Type: application/json' -d '{}' 'http://72.60.5.68:3000/api/deploy/27a982c031f1f91d1d30e0c454e46609373535b68a44a6cd'",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f api"
@@ -22,13 +22,22 @@
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
-  "keywords": ["api", "typescript", "express", "prisma", "jwt", "autismo", "teapoio"],
+  "keywords": [
+    "api",
+    "typescript",
+    "express",
+    "prisma",
+    "jwt",
+    "autismo",
+    "teapoio"
+  ],
   "author": "TeApoio Team",
   "license": "MIT",
   "dependencies": {
-    "@prisma/client": "^5.7.0",
+    "@prisma/client": "^6.18.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
@@ -47,7 +56,7 @@
     "@types/node": "^20.10.5",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.6",
-    "prisma": "^5.7.0",
+    "prisma": "^6.18.0",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   }

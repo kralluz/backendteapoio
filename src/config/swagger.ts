@@ -16,6 +16,10 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
+        url: 'http://72.60.5.68:3333/api',
+        description: 'Servidor de Produção'
+      },
+      {
         url: 'http://localhost:3333/api',
         description: 'Servidor de Desenvolvimento'
       }

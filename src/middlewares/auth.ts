@@ -7,14 +7,7 @@ interface TokenPayload {
   email: string;
 }
 
-declare global {
-  namespace Express {
-    interface Request {
-      userId?: string;
-      userEmail?: string;
-    }
-  }
-}
+
 
 export const authMiddleware = (
   req: Request,
