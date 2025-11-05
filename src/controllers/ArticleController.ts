@@ -9,8 +9,9 @@ const createArticleSchema = z.object({
   title: z.string().min(5, 'Título deve ter no mínimo 5 caracteres'),
   content: z.string().min(10, 'Conteúdo deve ter no mínimo 10 caracteres'),
   excerpt: z.string().optional(),
-  image: z.string().url().optional(),
+  image: z.string().url().optional().or(z.literal('')).optional(),
   category: z.string(),
+  tags: z.array(z.string()).optional().default([]),
   readTime: z.number().int().positive().optional(),
   published: z.boolean().optional()
 });
@@ -41,7 +42,45 @@ export class ArticleController {
           select: {
             id: true,
             name: true,
-            avatar: true
+            avatar: true,
+            role: true,
+            specialty: true
+          }
+        },
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+            favorites: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return res.json(articles);
+  }
+
+  // Novo método: listar artigos do próprio usuário (profissional)
+  async listMyArticles(req: Request, res: Response) {
+    const { published } = req.query;
+
+    const where: any = { authorId: req.userId };
+
+    if (published !== undefined) {
+      where.published = published === 'true';
+    }
+
+    const articles = await prisma.article.findMany({
+      where,
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+            role: true,
+            specialty: true
           }
         },
         _count: {

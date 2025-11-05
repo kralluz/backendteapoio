@@ -9,13 +9,14 @@ const createActivitySchema = z.object({
   title: z.string().min(5),
   description: z.string().min(10),
   content: z.string().min(10),
-  image: z.string().url().optional(),
+  image: z.string().url().optional().or(z.literal('')).optional(),
   difficulty: z.string(),
   ageRange: z.string(),
   duration: z.number().int().positive(),
   materials: z.array(z.string()),
   steps: z.array(z.string()),
   category: z.string(),
+  tags: z.array(z.string()).optional().default([]),
   published: z.boolean().optional()
 });
 
@@ -44,7 +45,45 @@ export class ActivityController {
           select: {
             id: true,
             name: true,
-            avatar: true
+            avatar: true,
+            role: true,
+            specialty: true
+          }
+        },
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+            favorites: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return res.json(activities);
+  }
+
+  // Novo método: listar atividades do próprio usuário (profissional)
+  async listMyActivities(req: Request, res: Response) {
+    const { published } = req.query;
+
+    const where: any = { authorId: req.userId };
+
+    if (published !== undefined) {
+      where.published = published === 'true';
+    }
+
+    const activities = await prisma.activity.findMany({
+      where,
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+            role: true,
+            specialty: true
           }
         },
         _count: {

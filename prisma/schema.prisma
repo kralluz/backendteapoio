@@ -8,23 +8,27 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String    @id @default(uuid())
+  email     String    @unique
   password  String
   name      String
   avatar    String?
-  role      UserRole @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      UserRole  @default(USER)
+  crp       String?   // Conselho Regional de Psicologia ou Medicina
+  specialty String?   // Especialidade do profissional
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   // Relações
-  articles          Article[]
-  activities        Activity[]
-  comments          Comment[]
-  likes             Like[]
-  favorites         Favorite[]
-  autismProfiles    AutismProfile[]
-  profileCreatedBy  AutismProfile[] @relation("ProfileCreatedBy")
+  articles            Article[]
+  activities          Activity[]
+  comments            Comment[]
+  likes               Like[]
+  favorites           Favorite[]
+  autismProfiles      AutismProfile[]
+  profileCreatedBy    AutismProfile[]       @relation("ProfileCreatedBy")
+  articleInteractions ArticleInteraction[]
+  activityInteractions ActivityInteraction[]
 
   @@map("users")
 }
@@ -36,6 +40,7 @@ model Article {
   excerpt     String?
   image       String?
   category    String
+  tags        String[] @default([])
   readTime    Int      @default(5)
   published   Boolean  @default(true)
   authorId    String
@@ -43,11 +48,14 @@ model Article {
   updatedAt   DateTime @updatedAt
 
   // Relações
-  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  comments  Comment[]
-  likes     Like[]
-  favorites Favorite[]
+  author       User                 @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments     Comment[]
+  likes        Like[]
+  favorites    Favorite[]
+  interactions ArticleInteraction[]
+  stats        ArticleStats?
 
+  @@index([tags], type: Gin)
   @@map("articles")
 }
 
@@ -63,17 +71,21 @@ model Activity {
   materials   String[]
   steps       String[]
   category    String
+  tags        String[] @default([])
   published   Boolean  @default(true)
   authorId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   // Relações
-  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  comments  Comment[]
-  likes     Like[]
-  favorites Favorite[]
+  author       User                   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments     Comment[]
+  likes        Like[]
+  favorites    Favorite[]
+  interactions ActivityInteraction[]
+  stats        ActivityStats?
 
+  @@index([tags], type: Gin)
   @@map("activities")
 }
 
@@ -152,8 +164,88 @@ model Favorite {
   @@map("favorites")
 }
 
+
+// Modelos de Interação para Sistema de Recomendação
+model ArticleInteraction {
+  id         String          @id @default(uuid())
+  userId     String
+  articleId  String
+  type       InteractionType
+  createdAt  DateTime        @default(now())
+
+  // Relações
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId, type])
+  @@index([userId, type])
+  @@index([articleId, type])
+  @@map("article_interactions")
+}
+
+model ActivityInteraction {
+  id         String          @id @default(uuid())
+  userId     String
+  activityId String
+  type       InteractionType
+  createdAt  DateTime        @default(now())
+
+  // Relações
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, activityId, type])
+  @@index([userId, type])
+  @@index([activityId, type])
+  @@map("activity_interactions")
+}
+
+// Modelos de Estatísticas para Sistema de Recomendação
+model ArticleStats {
+  id            String   @id @default(uuid())
+  articleId     String   @unique
+  viewCount     Int      @default(0)
+  clickCount    Int      @default(0)
+  likeCount     Int      @default(0)
+  bookmarkCount Int      @default(0)
+  updatedAt     DateTime @updatedAt
+
+  // Relações
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([viewCount])
+  @@index([likeCount])
+  @@map("article_stats")
+}
+
+model ActivityStats {
+  id            String   @id @default(uuid())
+  activityId    String   @unique
+  viewCount     Int      @default(0)
+  clickCount    Int      @default(0)
+  likeCount     Int      @default(0)
+  bookmarkCount Int      @default(0)
+  updatedAt     DateTime @updatedAt
+
+  // Relações
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@index([viewCount])
+  @@index([likeCount])
+  @@map("activity_stats")
+}
+
+// Enums
 enum UserRole {
   USER
   ADMIN
   MODERATOR
+  PROFESSIONAL
+}
+
+enum InteractionType {
+  VIEW
+  CLICK
+  LIKE
+  BOOKMARK
 }

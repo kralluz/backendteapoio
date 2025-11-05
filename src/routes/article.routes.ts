@@ -7,6 +7,25 @@ const articleController = new ArticleController();
 
 /**
  * @swagger
+ * /articles/my:
+ *   get:
+ *     summary: Listar artigos do usuário logado
+ *     tags: [Articles]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: published
+ *         schema:
+ *           type: boolean
+ *     responses:
+ *       200:
+ *         description: Lista de artigos do usuário
+ */
+router.get('/my', authMiddleware, articleController.listMyArticles);
+
+/**
+ * @swagger
  * /articles:
  *   get:
  *     summary: Listar todos os artigos

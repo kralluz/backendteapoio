@@ -61,6 +61,51 @@ router.post('/register', authController.register);
 
 /**
  * @swagger
+ * /auth/register/professional:
+ *   post:
+ *     summary: Registrar novo usuário profissional
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *               - name
+ *               - crp
+ *               - specialty
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: profissional@exemplo.com
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *                 example: senha123
+ *               name:
+ *                 type: string
+ *                 minLength: 3
+ *                 example: Dr. João Silva
+ *               crp:
+ *                 type: string
+ *                 example: 12345/SP
+ *               specialty:
+ *                 type: string
+ *                 example: Psicologia Clínica
+ *     responses:
+ *       201:
+ *         description: Usuário profissional criado com sucesso
+ *       400:
+ *         description: Email já cadastrado ou dados inválidos
+ */
+router.post('/register/professional', authController.registerProfessional);
+
+/**
+ * @swagger
  * /auth/login:
  *   post:
  *     summary: Login de usuário

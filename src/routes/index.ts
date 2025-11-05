@@ -7,6 +7,9 @@ import autismProfileRoutes from './autismProfile.routes';
 import commentRoutes from './comment.routes';
 import likeRoutes from './like.routes';
 import favoriteRoutes from './favorite.routes';
+import uploadRoutes from './upload.routes';
+import interactionRoutes from './interaction.routes';
+import recommendationRoutes from './recommendation.routes';
 
 const routes = Router();
 
@@ -18,5 +21,8 @@ routes.use('/autism-profiles', autismProfileRoutes);
 routes.use('/comments', commentRoutes);
 routes.use('/likes', likeRoutes);
 routes.use('/favorites', favoriteRoutes);
+routes.use('/upload', uploadRoutes);
+routes.use('/interactions', interactionRoutes);
+routes.use('/recommendations', recommendationRoutes);
 
 export default routes;
