@@ -1,11 +1,12 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../middlewares/errorHandler';
 
 export class UploadController {
-  async uploadImage(req: Request, res: Response) {
+  async uploadImage(req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.file) {
-        throw new AppError('Nenhuma imagem foi enviada', 400);
+        // Use next para passar o erro para o middleware de erro
+        return next(new AppError('Nenhuma imagem foi enviada', 400));
       }
 
       // O multer-storage-cloudinary já faz o upload e retorna a URL
@@ -24,17 +25,18 @@ export class UploadController {
       });
     } catch (error: any) {
       console.error('Erro no upload:', error);
-      throw new AppError(
+      // Use next para passar o erro para o middleware de erro
+      return next(new AppError(
         error.message || 'Erro ao fazer upload da imagem',
-        error.statusCode || 500
-      );
+        error.http_code || 500 // Cloudinary pode usar http_code
+      ));
     }
   }
 
-  async uploadMultipleImages(req: Request, res: Response) {
+  async uploadMultipleImages(req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
-        throw new AppError('Nenhuma imagem foi enviada', 400);
+        return next(new AppError('Nenhuma imagem foi enviada', 400));
       }
 
       const files = req.files as Express.Multer.File[];
@@ -49,10 +51,10 @@ export class UploadController {
       });
     } catch (error: any) {
       console.error('Erro no upload múltiplo:', error);
-      throw new AppError(
+      return next(new AppError(
         error.message || 'Erro ao fazer upload das imagens',
-        error.statusCode || 500
-      );
+        error.http_code || 500 // Cloudinary pode usar http_code
+      ));
     }
   }
 }

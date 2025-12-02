@@ -35,6 +35,31 @@ router.put('/me', authMiddleware, userController.updateMe);
 
 /**
  * @swagger
+ * /users/me/password:
+ *   put:
+ *     summary: Alterar a senha do usuário logado
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       204:
+ *         description: Senha alterada com sucesso
+ */
+router.put('/me/password', authMiddleware, userController.changePassword);
+
+/**
+ * @swagger
  * /users/{id}:
  *   get:
  *     summary: Obter dados de um usuário específico

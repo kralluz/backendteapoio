@@ -14,11 +14,30 @@ const createProfileSchema = z.object({
   sensitivities: z.array(z.string()),
   strengths: z.array(z.string()),
   challenges: z.array(z.string()),
-  notes: z.string().optional(),
-  photo: z.string().url().optional()
-});
+  notes: z.string().optional().or(z.literal('')),
+  photo: z.string().url().optional().or(z.literal(''))
+}).transform((data) => ({
+  ...data,
+  notes: data.notes || undefined,
+  photo: data.photo || undefined
+}));
 
-const updateProfileSchema = createProfileSchema.partial();
+const updateProfileSchema = z.object({
+  name: z.string().min(2).optional(),
+  age: z.number().int().positive().optional(),
+  diagnosis: z.string().optional(),
+  level: z.string().optional(),
+  interests: z.array(z.string()).optional(),
+  sensitivities: z.array(z.string()).optional(),
+  strengths: z.array(z.string()).optional(),
+  challenges: z.array(z.string()).optional(),
+  notes: z.string().optional().or(z.literal('')),
+  photo: z.string().url().optional().or(z.literal(''))
+}).transform((data) => ({
+  ...data,
+  notes: data.notes || undefined,
+  photo: data.photo || undefined
+}));
 
 export class AutismProfileController {
   async list(req: Request, res: Response) {

@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { UploadController } from '../controllers/UploadController';
 import { authMiddleware } from '../middlewares/auth';
 import { uploadArticleImage, uploadActivityImage, uploadAvatar } from '../config/cloudinary';
@@ -28,7 +28,9 @@ const uploadController = new UploadController();
  *       200:
  *         description: Imagem enviada com sucesso
  */
-router.post('/article', authMiddleware, uploadArticleImage.single('image'), uploadController.uploadImage);
+router.post('/article', authMiddleware, uploadArticleImage.single('image'), (req: Request, res: Response, next: NextFunction) => {
+  uploadController.uploadImage(req, res, next);
+});
 
 /**
  * @swagger
@@ -52,7 +54,9 @@ router.post('/article', authMiddleware, uploadArticleImage.single('image'), uplo
  *       200:
  *         description: Imagem enviada com sucesso
  */
-router.post('/activity', authMiddleware, uploadActivityImage.single('image'), uploadController.uploadImage);
+router.post('/activity', authMiddleware, uploadActivityImage.single('image'), (req: Request, res: Response, next: NextFunction) => {
+  uploadController.uploadImage(req, res, next);
+});
 
 /**
  * @swagger
@@ -76,6 +80,8 @@ router.post('/activity', authMiddleware, uploadActivityImage.single('image'), up
  *       200:
  *         description: Avatar enviado com sucesso
  */
-router.post('/avatar', authMiddleware, uploadAvatar.single('image'), uploadController.uploadImage);
+router.post('/avatar', authMiddleware, uploadAvatar.single('image'), (req: Request, res: Response, next: NextFunction) => {
+  uploadController.uploadImage(req, res, next);
+});
 
 export default router;

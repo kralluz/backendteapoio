@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { ArticleController } from '../controllers/ArticleController';
 import { authMiddleware } from '../middlewares/auth';
+import { checkRole } from '../middlewares/checkRole';
 
 const router = Router();
 const articleController = new ArticleController();
@@ -75,7 +76,7 @@ router.get('/:id', articleController.getById);
  *       201:
  *         description: Artigo criado
  */
-router.post('/', authMiddleware, articleController.create);
+router.post('/', authMiddleware, checkRole(['PROFESSIONAL']), articleController.create);
 
 /**
  * @swagger
@@ -95,7 +96,7 @@ router.post('/', authMiddleware, articleController.create);
  *       200:
  *         description: Artigo atualizado
  */
-router.put('/:id', authMiddleware, articleController.update);
+router.put('/:id', authMiddleware, checkRole(['PROFESSIONAL']), articleController.update);
 
 /**
  * @swagger
@@ -115,6 +116,6 @@ router.put('/:id', authMiddleware, articleController.update);
  *       204:
  *         description: Artigo deletado
  */
-router.delete('/:id', authMiddleware, articleController.delete);
+router.delete('/:id', authMiddleware, checkRole(['PROFESSIONAL']), articleController.delete);
 
 export default router;
