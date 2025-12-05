@@ -97,6 +97,8 @@ export class UserController {
         id: true,
         name: true,
         avatar: true,
+        role: true,
+        specialty: true,
         createdAt: true,
         _count: {
           select: {
@@ -112,5 +114,87 @@ export class UserController {
     }
 
     return res.json(user);
+  }
+
+  async getUserArticles(req: Request, res: Response) {
+    const { id } = req.params;
+
+    // Verificar se o usuário existe
+    const user = await prisma.user.findUnique({
+      where: { id }
+    });
+
+    if (!user) {
+      throw new AppError('Usuário não encontrado', 404);
+    }
+
+    const articles = await prisma.article.findMany({
+      where: {
+        authorId: id,
+        published: true
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+            role: true,
+            specialty: true
+          }
+        },
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+            favorites: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return res.json(articles);
+  }
+
+  async getUserActivities(req: Request, res: Response) {
+    const { id } = req.params;
+
+    // Verificar se o usuário existe
+    const user = await prisma.user.findUnique({
+      where: { id }
+    });
+
+    if (!user) {
+      throw new AppError('Usuário não encontrado', 404);
+    }
+
+    const activities = await prisma.activity.findMany({
+      where: {
+        authorId: id,
+        published: true
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+            role: true,
+            specialty: true
+          }
+        },
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+            favorites: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return res.json(activities);
   }
 }

@@ -76,4 +76,40 @@ router.put('/me/password', authMiddleware, userController.changePassword);
  */
 router.get('/:id', userController.getById);
 
+/**
+ * @swagger
+ * /users/{id}/articles:
+ *   get:
+ *     summary: Obter artigos de um usuário específico
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista de artigos do usuário
+ */
+router.get('/:id/articles', userController.getUserArticles);
+
+/**
+ * @swagger
+ * /users/{id}/activities:
+ *   get:
+ *     summary: Obter atividades de um usuário específico
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista de atividades do usuário
+ */
+router.get('/:id/activities', userController.getUserActivities);
+
 export default router;
