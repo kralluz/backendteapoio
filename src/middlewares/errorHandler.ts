@@ -25,9 +25,13 @@ export const errorHandler = (
   }
 
   if (error instanceof ZodError) {
+    // Pegar a primeira mensagem de erro para facilitar o uso no frontend
+    const firstError = error.errors[0];
+    const errorMessage = firstError ? firstError.message : 'Erro de validação';
+
     return res.status(400).json({
       status: 'error',
-      message: 'Validation error',
+      message: errorMessage,
       errors: error.errors
     });
   }
